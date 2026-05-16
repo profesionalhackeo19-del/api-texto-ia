@@ -13,7 +13,7 @@ def chatear(datos: DatosInput, x_api_key: str = Header(None)):
     if x_api_key != "AmericoSecreto764":
         raise HTTPException(status_code=401, detail="Acceso denegado: API Key Invalida.")
     
-    # 2. URL definitiva con tu clave ya inyectada directamente dentro del texto
+    # 2. URL corregida a la versión 'v1' estable de Google
     url = "https://googleapis.com"
     
     # Estructura de la petición
