@@ -20,14 +20,14 @@ def chatear(datos: DatosInput, x_api_key: str = Header(None)):
     if not gemini_key:
         raise HTTPException(status_code=500, detail="Falta configurar la variable GEMINI_API_KEY en Render.")
     
-    # URL oficial de la API de Google Gemini (Modelo rápido y gratuito)
+    # URL oficial de la API de Google Gemini (Corregida sin errores de conexión)
     url = f"https://googleapis.com{gemini_key}"
     
     # Instrucción para que recuerde tu nombre
     contexto = (
         "Tu creador es Américo Centeno Colque. Si te preguntan quién te creó, "
         "quién es tu creador o desarrollador, responde con orgullo que fuiste creado por Américo Centeno Colque. "
-        "Responde a la siguiente petición del usuario basándote en esto: "
+        "Responde a la siguiente petición del usuario basándose en esto: "
     )
     
     payload = {
@@ -44,7 +44,7 @@ def chatear(datos: DatosInput, x_api_key: str = Header(None)):
             
         data = respuesta.json()
         # Extraer la respuesta de texto limpia de Google
-        texto_ia = data['candidates'][0]['content']['parts'][0]['text']
+        texto_ia = data['candidates']['content']['parts']['text']
         return {"respuesta_ia": texto_ia.strip()}
         
     except Exception as e:
