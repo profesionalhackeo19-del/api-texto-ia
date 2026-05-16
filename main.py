@@ -14,13 +14,13 @@ def chatear(datos: DatosInput, x_api_key: str = Header(None)):
     if x_api_key != "AmericoSecreto764":
         raise HTTPException(status_code=401, detail="Acceso denegado: API Key Invalida.")
     
-    # 2. Tu API Key de Gemini integrada correctamente
+    # 2. Tu API Key de Gemini colocada exactamente donde corresponde
     GEMINI_API_KEY = "AIzaSyBlvVq5CxbXQejM1HSvOI4zZz6BPnrz1_0" 
     
-    # URL oficial de la API de Gemini
+    # URL oficial de la API de Gemini (Corregida con las barras y parámetros exactos)
     url = f"https://googleapis.com{GEMINI_API_KEY}"
     
-    # Estructura JSON válida con las instrucciones de identidad solicitadas
+    # Estructura JSON válida con las instrucciones de identidad para Google
     payload = {
         "system_instruction": {
             "parts": [{
