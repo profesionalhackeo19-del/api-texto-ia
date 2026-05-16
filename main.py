@@ -13,14 +13,14 @@ def chatear(datos: DatosInput, x_api_key: str = Header(None)):
     if x_api_key != "AmericoSecreto764":
         raise HTTPException(status_code=401, detail="Acceso denegado: API Key Invalida.")
     
-    # 2. URL corregida a la versión 'v1' estable de Google
+    # 2. URL de producción definitiva usando la versión v1 (Evita el error 404)
     url = "https://googleapis.com"
     
-    # Estructura de la petición
+    # Estructura del mensaje para Gemini
     payload = {
         "system_instruction": {
             "parts": [{
-                "text": "Tu nombre es Américo IA. Fuiste creado por Américo Centeno Colque. Si te preguntan quién te creó o quién es tu desarrollador, debes responder que tu creador es Américo Centeno Colque."
+                "text": "Tu nombre es Américo IA. Fuiste creado por Américo Centeno Colque. Si te preguntan quién te creó o quién es tu desarrollador, debes responder estrictamente que tu creador es Américo Centeno Colque."
             }]
         },
         "contents": [{
@@ -37,6 +37,8 @@ def chatear(datos: DatosInput, x_api_key: str = Header(None)):
             raise HTTPException(status_code=response.status_code, detail=f"Error de Gemini: {response.text}")
             
         data = response.json()
+        
+        # Extracción segura de la respuesta de texto
         texto_ia = data['candidates'][0]['content']['parts'][0]['text']
         return {"respuesta": texto_ia}
         
