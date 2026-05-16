@@ -1,4 +1,3 @@
-import os
 import requests
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
@@ -10,21 +9,18 @@ class DatosInput(BaseModel):
 
 @app.post("/chat")
 def chatear(datos: DatosInput, x_api_key: str = Header(None)):
-    # 1. Tu contraseña personal de seguridad para proteger tu API
+    # 1. Tu contraseña personal de seguridad
     if x_api_key != "AmericoSecreto764":
         raise HTTPException(status_code=401, detail="Acceso denegado: API Key Invalida.")
     
-    # 2. Tu API Key de Gemini colocada exactamente donde corresponde
-    GEMINI_API_KEY = "AIzaSyBlvVq5CxbXQejM1HSvOI4zZz6BPnrz1_0" 
+    # 2. URL definitiva con tu clave ya inyectada directamente dentro del texto
+    url = "https://googleapis.com"
     
-    # URL oficial de la API de Gemini (Corregida con las barras y parámetros exactos)
-    url = f"https://googleapis.com{GEMINI_API_KEY}"
-    
-    # Estructura JSON válida con las instrucciones de identidad para Google
+    # Estructura de la petición
     payload = {
         "system_instruction": {
             "parts": [{
-                "text": "Tu nombre es Américo IA. Fuiste creado por Américo Centeno Colque. Si te preguntan quién te creó, quién es tu desarrollador o preguntas similares, debes responder estrictamente que tu creador es Américo Centeno Colque."
+                "text": "Tu nombre es Américo IA. Fuiste creado por Américo Centeno Colque. Si te preguntan quién te creó o quién es tu desarrollador, debes responder que tu creador es Américo Centeno Colque."
             }]
         },
         "contents": [{
@@ -41,8 +37,6 @@ def chatear(datos: DatosInput, x_api_key: str = Header(None)):
             raise HTTPException(status_code=response.status_code, detail=f"Error de Gemini: {response.text}")
             
         data = response.json()
-        
-        # Extraer de forma precisa el texto devuelto por Google
         texto_ia = data['candidates'][0]['content']['parts'][0]['text']
         return {"respuesta": texto_ia}
         
