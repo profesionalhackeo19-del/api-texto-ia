@@ -10,42 +10,41 @@ class DatosInput(BaseModel):
 
 @app.post("/chat")
 def chatear(datos: DatosInput, x_api_key: str = Header(None)):
-    
-    # 1. Tu contraseña personal de seguridad
+    # 1. Tu contraseña personal de seguridad para proteger tu API
     if x_api_key != "AmericoSecreto764":
         raise HTTPException(status_code=401, detail="Acceso denegado: API Key Invalida.")
     
-    # 2. Obtener la clave gratuita de Gemini desde Render
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    if not gemini_key:
-        raise HTTPException(status_code=500, detail="Falta configurar la variable GEMINI_API_KEY en Render.")
+    # 2. Tu API Key de Gemini integrada correctamente
+    GEMINI_API_KEY = "AIzaSyBlvVq5CxbXQejM1HSvOI4zZz6BPnrz1_0" 
     
-    # URL oficial de la API de Google Gemini (Corregida sin errores de conexión)
-    url = f"https://googleapis.com{gemini_key}"
+    # URL oficial de la API de Gemini
+    url = f"https://googleapis.com{GEMINI_API_KEY}"
     
-    # Instrucción para que recuerde tu nombre
-    contexto = (
-        "Tu creador es Américo Centeno Colque. Si te preguntan quién te creó, "
-        "quién es tu creador o desarrollador, responde con orgullo que fuiste creado por Américo Centeno Colque. "
-        "Responde a la siguiente petición del usuario basándose en esto: "
-    )
-    
+    # Estructura JSON válida con las instrucciones de identidad solicitadas
     payload = {
+        "system_instruction": {
+            "parts": [{
+                "text": "Tu nombre es Américo IA. Fuiste creado por Américo Centeno Colque. Si te preguntan quién te creó, quién es tu desarrollador o preguntas similares, debes responder estrictamente que tu creador es Américo Centeno Colque."
+            }]
+        },
         "contents": [{
-            "parts": [{"text": f"{contexto}{datos.prompt}"}]
+            "parts": [{"text": datos.prompt}]
         }]
     }
     
+    headers = {"Content-Type": "application/json"}
+    
     try:
-        respuesta = requests.post(url, json=payload)
+        response = requests.post(url, json=payload, headers=headers)
         
-        if respuesta.status_code != 200:
-            raise HTTPException(status_code=respuesta.status_code, detail=f"Error en Google Gemini: {respuesta.text}")
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f"Error de Gemini: {response.text}")
             
-        data = respuesta.json()
-        # Extraer la respuesta de texto limpia de Google
-        texto_ia = data['candidates']['content']['parts']['text']
-        return {"respuesta_ia": texto_ia.strip()}
+        data = response.json()
+        
+        # Extraer de forma precisa el texto devuelto por Google
+        texto_ia = data['candidates'][0]['content']['parts'][0]['text']
+        return {"respuesta": texto_ia}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
